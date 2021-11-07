@@ -16,5 +16,5 @@ type Store struct {
 }
 
 func NewStore(db *sql.DB) *Store {
-	return &Store{Dogs: &dogs.DogStore{Db: db}, Cats: &cats.CatStore{Db: db}, Users: &users.UserStore{Db: db}}
+	return &Store{Dogs: dogs.NewDogStore(db), Cats: cats.NewCatStore(db), Users: users.NewUserStore(db)}
 }

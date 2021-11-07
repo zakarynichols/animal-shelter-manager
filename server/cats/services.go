@@ -40,7 +40,7 @@ func (service *CatService) GetCatById(handler CatQuerier) http.HandlerFunc {
 			return
 		}
 
-		cat, err := handler.Cat(id.Id)
+		cat, err := handler.cat(id.Id)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)

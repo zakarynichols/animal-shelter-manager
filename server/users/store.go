@@ -8,17 +8,21 @@ import (
 
 // No pointers for interfaces?
 type UserQuerier interface {
-	CanCreateUser(s string) error
-	User(id int) (*RegisteredUser, error)
-	CreateUser(username string, hashedPassword []byte, sessionId string) (*RegisteredUser, error)
+	canCreateUser(s string) error
+	user(id int) (*RegisteredUser, error)
+	createUser(username string, hashedPassword []byte, sessionId string) (*RegisteredUser, error)
 }
 
 type UserStore struct {
-	Db *sql.DB
+	*sql.DB
 }
 
-func (store *UserStore) CanCreateUser(s string) error {
-	row, err := store.Db.Query("select username from users where username = $1", s)
+func NewUserStore(db *sql.DB) *UserStore {
+	return &UserStore{db}
+}
+
+func (store *UserStore) canCreateUser(s string) error {
+	row, err := store.Query("select username from users where username = $1", s)
 
 	if err != nil {
 		return err
@@ -46,10 +50,10 @@ func (store *UserStore) CanCreateUser(s string) error {
 	return nil
 }
 
-func (store *UserStore) User(id int) (*RegisteredUser, error) {
+func (store *UserStore) user(id int) (*RegisteredUser, error) {
 	var err error
 
-	row, err := store.Db.Query("select * from users where user_id = $1", id)
+	row, err := store.Query("select * from users where user_id = $1", id)
 
 	if err != nil {
 		return nil, err
@@ -70,10 +74,10 @@ func (store *UserStore) User(id int) (*RegisteredUser, error) {
 	return &newUser, nil
 }
 
-func (store *UserStore) CreateUser(username string, hashedPassword []byte, newSessionId string) (*RegisteredUser, error) {
+func (store *UserStore) createUser(username string, hashedPassword []byte, newSessionId string) (*RegisteredUser, error) {
 	var err error
 
-	row, err := store.Db.Query("insert into users(username, password, last_login, session) values ($1, $2, $3, $4) returning username, created_on, last_login, session", username, hashedPassword, time.Now(), newSessionId)
+	row, err := store.Query("insert into users(username, password, last_login, session) values ($1, $2, $3, $4) returning username, created_on, last_login, session", username, hashedPassword, time.Now(), newSessionId)
 
 	if err != nil {
 		return nil, err

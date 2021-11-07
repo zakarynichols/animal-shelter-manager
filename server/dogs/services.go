@@ -32,7 +32,7 @@ func GetDogById(handler DogQuerier) http.HandlerFunc {
 			return
 		}
 
-		dog, err := handler.Dog(id.Id)
+		dog, err := handler.dog(id.Id)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)

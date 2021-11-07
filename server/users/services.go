@@ -38,7 +38,7 @@ func Register(query UserQuerier) http.HandlerFunc {
 			return
 		}
 
-		err = query.CanCreateUser(preAuthUser.Username)
+		err = query.canCreateUser(preAuthUser.Username)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusConflict)
@@ -59,7 +59,7 @@ func Register(query UserQuerier) http.HandlerFunc {
 			return
 		}
 
-		newUser, err := query.CreateUser(preAuthUser.Username, bytes, newSessionId)
+		newUser, err := query.createUser(preAuthUser.Username, bytes, newSessionId)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)

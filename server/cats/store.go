@@ -6,17 +6,23 @@ import (
 
 // No pointers for interfaces?
 type CatQuerier interface {
-	Cat(id int) (*Cat, error)
+	cat(id int) (*Cat, error)
 }
 
 type CatStore struct {
-	Db *sql.DB
+	*sql.DB
 }
 
-func (store *CatStore) Cat(id int) (*Cat, error) {
+// Instantiate a new store to keep
+// db a private field on the struct
+func NewCatStore(db *sql.DB) *CatStore {
+	return &CatStore{db}
+}
+
+func (store *CatStore) cat(id int) (*Cat, error) {
 	var err error
 
-	row, err := store.Db.Query("select * from cats where cat_id = $1", id)
+	row, err := store.Query("select * from cats where cat_id = $1", id)
 
 	row.Next()
 

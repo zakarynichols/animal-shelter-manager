@@ -6,17 +6,21 @@ import (
 
 // No pointers for interfaces?
 type DogQuerier interface {
-	Dog(id int) (*Dog, error)
+	dog(id int) (*Dog, error)
 }
 
 type DogStore struct {
-	Db *sql.DB
+	*sql.DB
 }
 
-func (store *DogStore) Dog(id int) (*Dog, error) {
+func NewDogStore(db *sql.DB) *DogStore {
+	return &DogStore{db}
+}
+
+func (store *DogStore) dog(id int) (*Dog, error) {
 	var err error
 
-	row, err := store.Db.Query("select * from dogs where dog_id = $1", id)
+	row, err := store.Query("select * from dogs where dog_id = $1", id)
 
 	row.Next()
 
