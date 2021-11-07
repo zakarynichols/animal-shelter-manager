@@ -24,5 +24,5 @@ func (s *Server) InitializeRoutes() {
 	s.router.HandleFunc("/donations/donate", donations.DonateHandler()).Methods("POST")
 	s.router.HandleFunc("/read-cookie", donations.ReadCookieHandler()).Methods("GET")
 
-	s.router.HandleFunc("/cats", cats.GetCatById(s.store.Cats)).Methods("GET")
+	cats.Routes(s.router, s.store.Cats, &cats.CatService{})
 }

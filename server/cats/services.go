@@ -6,12 +6,20 @@ import (
 	"server/utils"
 )
 
+type CatHandler interface {
+	GetCatById(handler CatQuerier) http.HandlerFunc
+}
+
+type CatService struct {
+	CatHandler
+}
+
 type Cat struct {
 	CatId int    `json:"cat_id"`
 	Name  string `json:"name"`
 }
 
-func GetCatById(handler CatQuerier) http.HandlerFunc {
+func (service *CatService) GetCatById(handler CatQuerier) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
