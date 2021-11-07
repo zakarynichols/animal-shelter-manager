@@ -1,9 +1,9 @@
 package app
 
 import (
-	"server/auth"
 	"server/cats"
 	"server/donations"
+	"server/users"
 
 	"github.com/gorilla/mux"
 )
@@ -17,8 +17,8 @@ func (s *Server) Router() *mux.Router {
 // Method points to Server struct to give routes access to dependencies.
 func (s *Server) InitializeRoutes() {
 	// Authentication
-	s.router.HandleFunc("/register", auth.SignUp(&s.store.Users)).Methods("POST", "OPTIONS")
-	// s.router.HandleFunc("/logged-in", auth.LoggedInRoute(s.db)).Methods("GET", "OPTIONS")
+	s.router.HandleFunc("/register", users.Register(s.store.Users)).Methods("POST", "OPTIONS")
+	s.router.HandleFunc("/logged-in", users.Login(s.store.Users)).Methods("POST", "OPTIONS")
 
 	// Donations
 	s.router.HandleFunc("/donations/donate", donations.DonateHandler()).Methods("POST")

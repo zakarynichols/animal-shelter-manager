@@ -7,6 +7,7 @@ import (
 	"server/app"
 	"server/config"
 	"server/database"
+	"server/store"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -18,7 +19,7 @@ import (
 	env := config.GetEnvVars()
 
 	// Initialize database
-	store, err := database.OpenDB(database.DatabaseInfo{
+	db, err := database.OpenDB(database.DatabaseInfo{
 		Host: env.Host,
 		Port: env.DbPort,
 		User: env.User,
@@ -30,6 +31,9 @@ import (
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
+	// Create store abstraction for http handlers to interface with db
+	store := store.NewStore(db)
 
 	// Create new router instance
 	router := mux.NewRouter()

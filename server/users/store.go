@@ -15,10 +15,9 @@ type UserHandler interface {
 
 type UserStore struct {
 	Db *sql.DB
-	Query UserHandler
 }
 
-func (store *UserStore) CanCreateUser(s string) error {
+func (store UserStore) CanCreateUser(s string) error {
 	row, err := store.Db.Query("select username from users where username = $1", s)
 
 	if err != nil {
@@ -39,7 +38,7 @@ func (store *UserStore) CanCreateUser(s string) error {
 		return err
 	}
 
-	if username.Valid == true {
+	if username.Valid {
 		var errUserExists = errors.New("app: User already exists")
 		return errUserExists
 	}
@@ -47,7 +46,7 @@ func (store *UserStore) CanCreateUser(s string) error {
 	return nil
 }
 
-func (store *UserStore) User(id int) (*RegisteredUser, error) {
+func (store UserStore) User(id int) (*RegisteredUser, error) {
 	var err error
 
 	row, err := store.Db.Query("select * from users where user_id = $1", id)
@@ -71,7 +70,7 @@ func (store *UserStore) User(id int) (*RegisteredUser, error) {
 	return &newUser, nil
 }
 
-func (store *UserStore) CreateUser(username string, hashedPassword []byte, newSessionId string) (*RegisteredUser, error) {
+func (store UserStore) CreateUser(username string, hashedPassword []byte, newSessionId string) (*RegisteredUser, error) {
 	var err error
 
 	row, err := store.Db.Query("insert into users(username, password, last_login, session) values ($1, $2, $3, $4) returning username, created_on, last_login, session", username, hashedPassword, time.Now(), newSessionId)

@@ -1,4 +1,4 @@
-package auth
+package users
 
 import (
 	"crypto/rand"
@@ -6,42 +6,22 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"server/users"
 	"server/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-// func LoggedInRoute(db *sql.DB) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		w.Header().Set("Access-Control-Allow-Credentials", "true")
-// 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-// 		w.Header().Set("Content-Type", "application/json")
-// 		var err error
+func Login(handler UserHandler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		w.Header().Set("Content-Type", "application/json")
+		// var err error
 
-// 		// cookie, err := IsAuthenticated(w, r)
 
-// 		if err != nil {
-// 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)
-// 			return
-// 		}
+	}}
 
-// 		// row := db.QueryRow("select session from users where session = $1", cookie.Value)
-
-// 		var sessId string
-
-// 		err = row.Scan(&sessId)
-
-// 		if err != nil {
-// 			utils.AppHttpError(w, utils.AppJsonError{Message: "You must login to view this resource."}, http.StatusUnauthorized)
-// 			return
-// 		}
-
-// 		fmt.Println("You are authenticated!")
-// 	}
-// }
-
-func SignUp(handler users.UserHandler) http.HandlerFunc {
+func Register(handler UserHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -49,7 +29,7 @@ func SignUp(handler users.UserHandler) http.HandlerFunc {
 
 		var err error
 
-		var preAuthUser users.PreAuthenticatedUser
+		var preAuthUser PreAuthenticatedUser
 
 		err = json.NewDecoder(r.Body).Decode(&preAuthUser)
 

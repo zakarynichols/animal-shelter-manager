@@ -11,7 +11,6 @@ type CatHandler interface {
 
 type CatStore struct {
 	Db *sql.DB
-	Query CatHandler
 }
 
 func (store CatStore) Cat(id int) (*Cat, error) {
