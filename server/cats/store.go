@@ -5,7 +5,7 @@ import (
 )
 
 // No pointers for interfaces?
-type CatHandler interface {
+type CatQuerier interface {
 	Cat(id int) (*Cat, error)
 }
 

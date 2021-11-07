@@ -1,4 +1,4 @@
-package cats
+package dogs
 
 import (
 	"encoding/json"
@@ -6,12 +6,12 @@ import (
 	"server/utils"
 )
 
-type Cat struct {
-	CatId int    `json:"cat_id"`
+type Dog struct {
+	DogId int    `json:"dog_id"`
 	Name  string `json:"name"`
 }
 
-func GetCatById(handler CatHandler) http.HandlerFunc {
+func GetDogById(handler DogQuerier) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -20,7 +20,7 @@ func GetCatById(handler CatHandler) http.HandlerFunc {
 		var err error
 
 		type Id struct {
-			Id int `json:"cat_id"`
+			Id int `json:"dog_id"`
 		}
 
 		var id Id
@@ -32,7 +32,7 @@ func GetCatById(handler CatHandler) http.HandlerFunc {
 			return
 		}
 
-		cat, err := handler.Cat(id.Id)
+		dog, err := handler.Dog(id.Id)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)
@@ -42,7 +42,7 @@ func GetCatById(handler CatHandler) http.HandlerFunc {
 		
 		w.WriteHeader(http.StatusOK)
 
-		err = json.NewEncoder(w).Encode(cat)
+		err = json.NewEncoder(w).Encode(dog)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)

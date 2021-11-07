@@ -5,35 +5,22 @@ package store
 import (
 	"database/sql"
 	"server/cats"
+	"server/dogs"
 	"server/users"
 )
 
-type DogHandler interface {
-	Dog(s string) *sql.Row
-}
-
-type DogStore struct {
-	db    *sql.DB
-	Query DogHandler
-}
-
 type Store struct {
-	Dogs  DogStore
-	Cats  cats.CatHandler
-	Users users.UserHandler
+	Dogs  dogs.DogQuerier
+	Cats  cats.CatQuerier
+	Users users.UserQuerier
 }
 
 type StoreHandler interface {
-	DogHandler
-	cats.CatHandler
-	users.UserHandler
-}
-
-func (store DogStore) Dog(s string) *sql.Row {
-	row := store.db.QueryRow(s)
-	return row
+	dogs.DogQuerier
+	cats.CatQuerier
+	users.UserQuerier
 }
 
 func NewStore(db *sql.DB) *Store {
-	return &Store{Dogs: DogStore{db: db}, Cats: cats.CatStore{Db: db}, Users: users.UserStore{Db: db}}
+	return &Store{Dogs: dogs.DogStore{Db: db}, Cats: cats.CatStore{Db: db}, Users: users.UserStore{Db: db}}
 }

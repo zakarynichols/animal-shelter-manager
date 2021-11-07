@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Login(handler UserHandler) http.HandlerFunc {
+func Login(query UserQuerier) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -21,7 +21,7 @@ func Login(handler UserHandler) http.HandlerFunc {
 
 	}}
 
-func Register(handler UserHandler) http.HandlerFunc {
+func Register(query UserQuerier) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -38,7 +38,7 @@ func Register(handler UserHandler) http.HandlerFunc {
 			return
 		}
 
-		err = handler.CanCreateUser(preAuthUser.Username)
+		err = query.CanCreateUser(preAuthUser.Username)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusConflict)
@@ -59,7 +59,7 @@ func Register(handler UserHandler) http.HandlerFunc {
 			return
 		}
 
-		newUser, err := handler.CreateUser(preAuthUser.Username, bytes, newSessionId)
+		newUser, err := query.CreateUser(preAuthUser.Username, bytes, newSessionId)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)

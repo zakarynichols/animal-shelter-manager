@@ -7,7 +7,7 @@ import (
 )
 
 // No pointers for interfaces?
-type UserHandler interface {
+type UserQuerier interface {
 	CanCreateUser(s string) error
 	User(id int) (*RegisteredUser, error)
 	CreateUser(username string, hashedPassword []byte, sessionId string) (*RegisteredUser, error)
