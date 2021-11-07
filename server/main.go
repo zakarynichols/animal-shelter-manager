@@ -7,6 +7,7 @@ import (
 	"server/app"
 	"server/config"
 	"server/database"
+	"server/handlers"
 	"server/store"
 
 	"github.com/gorilla/mux"
@@ -32,20 +33,23 @@ import (
 		log.Fatal(err.Error())
 	}
 
-	// Create store abstraction for http handlers to interface with db
+	// Instantiate store abstraction for http handlers to interface with db
 	store := store.NewStore(db)
 
-	// Create new router instance
+	// Instantiate new router handlers
+	handlers := handlers.NewHandlers()
+
+	// Instantiate new router instance
 	router := mux.NewRouter()
 
 	// Instantiate new server with required dependencies
-	server := app.NewServer(store, router, env)
+	server := app.NewServer(store, router, env, handlers)
 
 	// Initialize stripe API
 	stripe.Key = env.StripeKey
 
-	// Initialize routes
-	server.InitializeRoutes()
+	// Initialize app service
+	server.InitAppService()
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", env.ServerPort), server.Router()))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", env.ServerPort), server.NewRouter()))
   }

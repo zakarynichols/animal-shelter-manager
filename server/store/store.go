@@ -15,12 +15,6 @@ type Store struct {
 	Users users.UserQuerier
 }
 
-type StoreHandler interface {
-	dogs.DogQuerier
-	cats.CatQuerier
-	users.UserQuerier
-}
-
 func NewStore(db *sql.DB) *Store {
-	return &Store{Dogs: dogs.DogStore{Db: db}, Cats: cats.CatStore{Db: db}, Users: users.UserStore{Db: db}}
+	return &Store{Dogs: &dogs.DogStore{Db: db}, Cats: &cats.CatStore{Db: db}, Users: &users.UserStore{Db: db}}
 }

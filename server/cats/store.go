@@ -13,7 +13,7 @@ type CatStore struct {
 	Db *sql.DB
 }
 
-func (store CatStore) Cat(id int) (*Cat, error) {
+func (store *CatStore) Cat(id int) (*Cat, error) {
 	var err error
 
 	row, err := store.Db.Query("select * from cats where cat_id = $1", id)
