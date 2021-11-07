@@ -11,17 +11,30 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Login(query UserQuerier) http.HandlerFunc {
+type UserHandler interface {
+	Login(store UserStore) http.HandlerFunc
+	Register(store UserStore) http.HandlerFunc
+}
+
+type userHandler struct {
+	UserHandler
+}
+
+func NewUserHandler() *userHandler {
+	return &userHandler{}
+}
+
+func (handler *userHandler) Login(store UserStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 		w.Header().Set("Content-Type", "application/json")
 		// var err error
 
+	}
+}
 
-	}}
-
-func Register(query UserQuerier) http.HandlerFunc {
+func (handler *userHandler) Register(store UserStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -38,7 +51,7 @@ func Register(query UserQuerier) http.HandlerFunc {
 			return
 		}
 
-		err = query.canCreateUser(preAuthUser.Username)
+		err = store.canCreateUser(preAuthUser.Username)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusConflict)
@@ -59,7 +72,7 @@ func Register(query UserQuerier) http.HandlerFunc {
 			return
 		}
 
-		newUser, err := query.createUser(preAuthUser.Username, bytes, newSessionId)
+		newUser, err := store.createUser(preAuthUser.Username, bytes, newSessionId)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)
@@ -67,10 +80,10 @@ func Register(query UserQuerier) http.HandlerFunc {
 		}
 
 		http.SetCookie(w, &http.Cookie{
-			Name: "id",
+			Name:   "id",
 			MaxAge: 60,
-			Value: newSessionId,
-			Path: "/",
+			Value:  newSessionId,
+			Path:   "/",
 		})
 
 		w.WriteHeader(http.StatusOK)
@@ -96,9 +109,9 @@ func Register(query UserQuerier) http.HandlerFunc {
 // }
 
 // TODO: Create secure session id
-func sessionId() (string, error){
+func sessionId() (string, error) {
 	b := make([]byte, 32)
-	 _, err := io.ReadFull(rand.Reader, b)
+	_, err := io.ReadFull(rand.Reader, b)
 	if err != nil {
 		return "", err
 	}

@@ -10,9 +10,9 @@ import (
 )
 
 type Store struct {
-	Dogs  dogs.DogQuerier
-	Cats  cats.CatQuerier
-	Users users.UserQuerier
+	Dogs  dogs.DogStore
+	Cats  cats.CatStore
+	Users users.UserStore
 }
 
 func NewStore(db *sql.DB) *Store {

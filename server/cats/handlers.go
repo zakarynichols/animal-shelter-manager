@@ -7,19 +7,18 @@ import (
 )
 
 type CatHandler interface {
-	GetCatById(handler CatQuerier) http.HandlerFunc
+	getCatById(handler CatStore) http.HandlerFunc
 }
 
-type CatService struct {
+type catHandler struct {
 	CatHandler
 }
 
-type Cat struct {
-	CatId int    `json:"cat_id"`
-	Name  string `json:"name"`
+func NewCatHandler() *catHandler {
+	return &catHandler{}
 }
 
-func (service *CatService) GetCatById(handler CatQuerier) http.HandlerFunc {
+func (handler *catHandler) getCatById(store CatStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -40,14 +39,13 @@ func (service *CatService) GetCatById(handler CatQuerier) http.HandlerFunc {
 			return
 		}
 
-		cat, err := handler.cat(id.Id)
+		cat, err := store.cat(id.Id)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)
 			return
 		}
 
-		
 		w.WriteHeader(http.StatusOK)
 
 		err = json.NewEncoder(w).Encode(cat)

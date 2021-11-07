@@ -66,12 +66,12 @@ func DonateHandler() http.HandlerFunc {
 		}
 
 		http.SetCookie(w, &http.Cookie{
-			Name: "id",
+			Name:   "id",
 			MaxAge: 60,
-			Value: "Test value",
-			Path: "/",
+			Value:  "Test value",
+			Path:   "/",
 		})
-		
+
 		w.WriteHeader(http.StatusOK)
 
 		err = json.NewEncoder(w).Encode(&c)
@@ -85,13 +85,13 @@ func DonateHandler() http.HandlerFunc {
 
 func ReadCookieHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		 // Read cookie
-		 cookie, err := r.Cookie("id")
-		 if err != nil {
-			 fmt.Printf("Cant find cookie :/\r\n")
-			 return
-		 }
- 
-		 fmt.Printf("%s=%s\r\n", cookie.Name, cookie.Value)
+		// Read cookie
+		cookie, err := r.Cookie("id")
+		if err != nil {
+			fmt.Printf("Cant find cookie :/\r\n")
+			return
+		}
+
+		fmt.Printf("%s=%s\r\n", cookie.Name, cookie.Value)
 	}
 }

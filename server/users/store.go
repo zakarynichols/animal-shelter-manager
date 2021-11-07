@@ -7,21 +7,36 @@ import (
 )
 
 // No pointers for interfaces?
-type UserQuerier interface {
+
+// Expose the interface and and the
+// func to instantiate a user store
+type UserStore interface {
 	canCreateUser(s string) error
 	user(id int) (*RegisteredUser, error)
 	createUser(username string, hashedPassword []byte, sessionId string) (*RegisteredUser, error)
 }
 
-type UserStore struct {
+type PreAuthenticatedUser struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type RegisteredUser struct {
+	Username  string         `json:"username"`
+	CreatedOn time.Time      `json:"created_on"`
+	LastLogin time.Time      `json:"last_login"`
+	Session   sql.NullString `json:"session"`
+}
+
+type userStore struct {
 	*sql.DB
 }
 
-func NewUserStore(db *sql.DB) *UserStore {
-	return &UserStore{db}
+func NewUserStore(db *sql.DB) *userStore {
+	return &userStore{db}
 }
 
-func (store *UserStore) canCreateUser(s string) error {
+func (store *userStore) canCreateUser(s string) error {
 	row, err := store.Query("select username from users where username = $1", s)
 
 	if err != nil {
@@ -50,7 +65,7 @@ func (store *UserStore) canCreateUser(s string) error {
 	return nil
 }
 
-func (store *UserStore) user(id int) (*RegisteredUser, error) {
+func (store *userStore) user(id int) (*RegisteredUser, error) {
 	var err error
 
 	row, err := store.Query("select * from users where user_id = $1", id)
@@ -74,7 +89,7 @@ func (store *UserStore) user(id int) (*RegisteredUser, error) {
 	return &newUser, nil
 }
 
-func (store *UserStore) createUser(username string, hashedPassword []byte, newSessionId string) (*RegisteredUser, error) {
+func (store *userStore) createUser(username string, hashedPassword []byte, newSessionId string) (*RegisteredUser, error) {
 	var err error
 
 	row, err := store.Query("insert into users(username, password, last_login, session) values ($1, $2, $3, $4) returning username, created_on, last_login, session", username, hashedPassword, time.Now(), newSessionId)

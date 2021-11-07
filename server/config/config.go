@@ -9,13 +9,13 @@ import (
 )
 
 type Env struct {
-	Host string
-	DbPort int
-	User string
-	Password string
-	Dbname string
+	Host       string
+	DbPort     int
+	User       string
+	Password   string
+	Dbname     string
 	ServerPort string
-	StripeKey string
+	StripeKey  string
 }
 
 func GetEnvVars() *Env {
@@ -40,12 +40,12 @@ func GetEnvVars() *Env {
 	}
 
 	return &Env{
-			Host: host,
-			DbPort: parsedPort,
-			User: user, 
-			Password: password,
-			Dbname: dbname,
-			ServerPort: serverPort,
-			StripeKey: stripeKey,
+		Host:       host,
+		DbPort:     parsedPort,
+		User:       user,
+		Password:   password,
+		Dbname:     dbname,
+		ServerPort: serverPort,
+		StripeKey:  stripeKey,
 	}
 }

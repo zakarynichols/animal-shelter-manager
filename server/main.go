@@ -15,19 +15,19 @@ import (
 	stripe "github.com/stripe/stripe-go/v72"
 )
 
-  func main() {
+func main() {
 	// Get environment variables
 	env := config.GetEnvVars()
 
 	// Initialize database
 	db, err := database.OpenDB(database.DatabaseInfo{
-		Host: env.Host,
-		Port: env.DbPort,
-		User: env.User,
+		Host:     env.Host,
+		Port:     env.DbPort,
+		User:     env.User,
 		Password: env.Password,
-		Dbname: env.Dbname,
+		Dbname:   env.Dbname,
 	})
-	
+
 	// Database is a required dependency. Terminate on error
 	if err != nil {
 		log.Fatal(err.Error())
@@ -51,5 +51,5 @@ import (
 	// Initialize app service
 	server.InitAppService()
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", env.ServerPort), server.NewRouter()))
-  }
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", env.ServerPort), router))
+}

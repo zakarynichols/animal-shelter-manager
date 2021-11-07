@@ -5,19 +5,24 @@ import (
 )
 
 // No pointers for interfaces?
-type DogQuerier interface {
-	dog(id int) (*Dog, error)
+type DogStore interface {
+	dog(id int) (*dog, error)
 }
 
-type DogStore struct {
+type dogStore struct {
 	*sql.DB
 }
 
-func NewDogStore(db *sql.DB) *DogStore {
-	return &DogStore{db}
+type dog struct {
+	DogId int    `json:"dog_id"`
+	Name  string `json:"name"`
 }
 
-func (store *DogStore) dog(id int) (*Dog, error) {
+func NewDogStore(db *sql.DB) *dogStore {
+	return &dogStore{db}
+}
+
+func (store *dogStore) dog(id int) (*dog, error) {
 	var err error
 
 	row, err := store.Query("select * from dogs where dog_id = $1", id)
@@ -28,7 +33,7 @@ func (store *DogStore) dog(id int) (*Dog, error) {
 		return nil, err
 	}
 
-	c := Dog{}
+	c := dog{}
 
 	err = row.Scan(&c.DogId, &c.Name)
 

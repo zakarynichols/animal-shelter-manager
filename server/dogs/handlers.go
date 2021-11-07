@@ -6,12 +6,19 @@ import (
 	"server/utils"
 )
 
-type Dog struct {
-	DogId int    `json:"dog_id"`
-	Name  string `json:"name"`
+type DogHandler interface {
+	getDogById(handler DogStore) http.HandlerFunc
 }
 
-func GetDogById(handler DogQuerier) http.HandlerFunc {
+type dogHandler struct {
+	DogHandler
+}
+
+func NewDogHandler() *dogHandler {
+	return &dogHandler{}
+}
+
+func (handler *dogHandler) getDogById(store DogStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -32,14 +39,13 @@ func GetDogById(handler DogQuerier) http.HandlerFunc {
 			return
 		}
 
-		dog, err := handler.dog(id.Id)
+		dog, err := store.dog(id.Id)
 
 		if err != nil {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)
 			return
 		}
 
-		
 		w.WriteHeader(http.StatusOK)
 
 		err = json.NewEncoder(w).Encode(dog)
