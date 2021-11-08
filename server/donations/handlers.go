@@ -2,7 +2,6 @@ package donations
 
 import (
 	"encoding/json"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"server/utils"
@@ -12,7 +11,19 @@ import (
 	"github.com/stripe/stripe-go/v72/charge"
 )
 
-func DonateHandler() http.HandlerFunc {
+type DonationHandler interface {
+	donate() http.HandlerFunc
+}
+
+type donationHandler struct {
+	DonationHandler
+}
+
+func NewDonationHandler() *donationHandler {
+	return &donationHandler{}
+}
+
+func (handler *donationHandler) donate() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		type Donation struct {
 			Amount int64 `json:"donation_amount"`
@@ -80,18 +91,5 @@ func DonateHandler() http.HandlerFunc {
 			utils.AppHttpError(w, utils.AppJsonError{Message: err.Error()}, http.StatusInternalServerError)
 			return
 		}
-	}
-}
-
-func ReadCookieHandler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// Read cookie
-		cookie, err := r.Cookie("id")
-		if err != nil {
-			fmt.Printf("Cant find cookie :/\r\n")
-			return
-		}
-
-		fmt.Printf("%s=%s\r\n", cookie.Name, cookie.Value)
 	}
 }

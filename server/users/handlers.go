@@ -12,8 +12,8 @@ import (
 )
 
 type UserHandler interface {
-	Login(store UserStore) http.HandlerFunc
-	Register(store UserStore) http.HandlerFunc
+	login(store UserStore) http.HandlerFunc
+	register(store UserStore) http.HandlerFunc
 }
 
 type userHandler struct {
@@ -24,7 +24,7 @@ func NewUserHandler() *userHandler {
 	return &userHandler{}
 }
 
-func (handler *userHandler) Login(store UserStore) http.HandlerFunc {
+func (handler *userHandler) login(store UserStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
@@ -34,7 +34,7 @@ func (handler *userHandler) Login(store UserStore) http.HandlerFunc {
 	}
 }
 
-func (handler *userHandler) Register(store UserStore) http.HandlerFunc {
+func (handler *userHandler) register(store UserStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")

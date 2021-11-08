@@ -7,7 +7,6 @@ import (
 	"server/app"
 	"server/config"
 	"server/database"
-	"server/handlers"
 	"server/store"
 
 	"github.com/gorilla/mux"
@@ -37,7 +36,7 @@ func main() {
 	store := store.NewStore(db)
 
 	// Instantiate new router handlers
-	handlers := handlers.NewHandlers()
+	handlers := app.NewHandlers()
 
 	// Instantiate new router instance
 	router := mux.NewRouter()

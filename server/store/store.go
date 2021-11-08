@@ -10,11 +10,11 @@ import (
 )
 
 type Store struct {
-	Dogs  dogs.DogStore
-	Cats  cats.CatStore
-	Users users.UserStore
+	dogs.DogStore
+	cats.CatStore
+	users.UserStore
 }
 
 func NewStore(db *sql.DB) *Store {
-	return &Store{Dogs: dogs.NewDogStore(db), Cats: cats.NewCatStore(db), Users: users.NewUserStore(db)}
+	return &Store{dogs.NewDogStore(db), cats.NewCatStore(db), users.NewUserStore(db)}
 }
