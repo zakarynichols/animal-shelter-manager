@@ -42,7 +42,7 @@ func (handler *userHandler) register(store UserStore) http.HandlerFunc {
 
 		var err error
 
-		var preAuthUser PreAuthenticatedUser
+		var preAuthUser preAuthenticatedUser
 
 		err = json.NewDecoder(r.Body).Decode(&preAuthUser)
 
